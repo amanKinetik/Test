@@ -1,20 +1,19 @@
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
 
-const todosRouter = require('./routes/todos');
+import userRoutes from './routes/userRoutes.js';
+import matchRoutes from './routes/matchRoutes.js';
 
 const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Routes
-app.use('/todos', todosRouter);
+app.use('/user', userRoutes);
+app.use('/match', matchRoutes);
 
-
-module.exports = app;
+export default app;

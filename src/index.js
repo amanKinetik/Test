@@ -1,11 +1,15 @@
-require('dotenv').config();
+import mongoose from 'mongoose';
+import * as dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config();
 
 /**
  * Module dependencies.
  */
 
-const app = require('./app');
-const http = require('http');
+import http from 'http';
+import app from './app.js';
 
 /**
  * Get port from environment and store in Express.
@@ -24,9 +28,21 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+mongoose.connect(process.env.DATABASE_URL, {
+  keepAlive: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  autoIndex: true
+}).then(() => {
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
+})
+
+mongoose.connection.on('error', err => {
+  console.log(err)
+  throw new Error(`unable to connect to database: ${process.env.DATABASE_URL}`);
+});
 
 /**
  * Normalize a port into a number, string, or false.
